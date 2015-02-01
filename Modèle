@@ -1,4 +1,4 @@
-import clalcul_T
+import Calcul_integrale
 
 
 def gamma_temperature(fluide,alpha,a):
