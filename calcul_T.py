@@ -1,5 +1,8 @@
 import scipy.integrate as sp
 import math
+import os
+
+
 def calcul_T(T0,T1,p,Cp):
     """calcul de la fonction primitive de Cp(T), discrétisée avec un pas de 1/p
     sur l'intervalle [T0,T1], entiers, p entier"""
@@ -25,4 +28,8 @@ def trace(T0,T1,p,Cp):
     R2=calcul_T(T0,T1,p,Cp)[1]
     pypl.plot(R1,R2)
     pypl.show()
+    
+def stocker_F(T0,T1,p,Cp):
+    file = open("air.txt","w")
+    
     
