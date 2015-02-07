@@ -1,4 +1,4 @@
-import scipy.integrate as np
+import scipy.integrate as sp
 import math
 def calcul_T(T0,T1,p,Cp):
     """calcul de la fonction primitive de Cp(T), discrétisée avec un pas de 1/p
@@ -8,7 +8,7 @@ def calcul_T(T0,T1,p,Cp):
     R2=[0]#liste vide contenat les futurs couple (T,F(T))
     for i in range((T1-T0)*p):
         R1.append(T0+i*(1/p))#incrémente T
-        R2.append(R2[-1]+np.quad(Cp,T0+i*(1/p),T0+(i+1)*(1/p))[0])#camcul intég
+        R2.append(R2[-1]+sp.quad(Cp,T0+i*(1/p),T0+(i+1)*(1/p))[0])#camcul intég
     R1.pop(0)#on enlève les premiers termes nuls
     R2.pop(0)
     return [R1,R2]#R1 température, R2 valeur de l'intégrale 
@@ -25,3 +25,4 @@ def trace(T0,T1,p,Cp):
     R2=calcul_T(T0,T1,p,Cp)[1]
     pypl.plot(R1,R2)
     pypl.show()
+    

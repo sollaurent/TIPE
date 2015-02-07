@@ -1,4 +1,6 @@
-import Calcul_integrale
+from calcul_T import *
+import scipy
+from scipy.integrate import quad
 
 
 def gamma_temperature(fluide,alpha,a):
@@ -36,80 +38,70 @@ def Cp_temperature(fluide,alpha,a):
     
 def turboreacteur(T1,P1,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a):
     """Modélisation d'un turboréacteur
-    Hypothèses : transformations isentropiques dans compresseurs, turbines, tuyères
-             variations d'énergie potentielles et cinétiques négligées (sauf l'énergie cinétique dans la tuyère)
-             pas de parties mobiles saud dans compresseurs, turbines
-             approximation d'Elligham dans la chambre de combustion
-             air et mélange de gaz brulés modélisés par des gaz parfait
-    Soufflante = 1-2
-    Compresseur BP = 2-3
-    Compresseur HP = 3-4
-    Chambre de combustion = 4-5
-    Turbine HP = 5-6
-    Turbine BP = 6-7
-    Melangeur = 7-8/2-8
-    Tuyère = 8-9 """
+    Hypothèses : transformations isentropiques dans com  """
     
     #calcul des fonctions utilisés dans les blocs du turboréacteur
-    f1=lambda T: gamma_temperature(0,0,a)/(T(gamma_temperature(0,0,a)-1)) #fonction gamma/T*(gamma-1) de l'air
-    F1=calcul_T(T1,2500,100,f1) #calcul de la primitive de gamma/T*(gamma-1) pour l'air
+    f1=lambda T: gamma_temperature(0,0,a)/(T*(gamma_temperature(0,0,a)-1)) #fonction gamma/T*(gamma-1) de l'air
+    F1=calcul_T(200,2500,5,f1) #calcul de la primitive de gamma/T*(gamma-1) pour l'air
     Finv1=[F1[1],F1[0]] #on inverse les deux listes pour determiner l'inverse
 
     f2=287*Cp_temperature(2,alpha,a) #fonction 287*Cp pour mélange air/essence
-    F2=calcul_T(T1,2500,100,f2) #calcul de la primitive de 287*Cp pour mélange air/essence
+    F2=calcul_T(200,2500,5,f2) #calcul de la primitive de 287*Cp pour mélange air/essence
     Finv2=[F2[1],F2[0]] #calcul de l'inverse
 
-    def Finv1_calcul(K):
+def Finv1_calcul(K):
         """recherche de la valeur de Finv1 la plus proche de K"""
         assert K>Finv1[0][0] and K<Finv1[0][-1] #on vérifie que K est compris dans la plage connue
-        for i range (len(Finv1[0]): #dès que K passe au dessus d'une valeur de Finv1[0), on lui associe la valeur correspondante(arrondie par défaut)
+        for i in range(len(Finv1[0])): #dès que K passe au dessus d'une valeur de
+        #Finv1[0), on lui associe la valeur correspondante, arrondie par défaut
             if K>Finv1[0][i]:
                 return Finv1[1][i]
 
-    def Finv2_calcul(K):
+def Finv2_calcul(K):
         """recherche de la valeur de Finv2 la plus proche de K"""
         assert K>Finv2[0][0] and K<Finv2[0][-1] #on vérifie que K appartient à la plage connue
-        for i range (len(Finv1[0]): #arrondi par défaut de la valeur de K par rapport à la plage connue
+        for i in range (len(Finv1[0])): #arrondi par défaut de la valeur de K par rapport à la plage connue
             if K>Finv2[0][i]:
                 return Finv2[1][i]
     
-    import scipy
-    from scipy.integrate import quad
     
-    #Soufflante, obtenu par integration(Laplace adapté)
-    T2=Finv1_calcul(F1(T1)+ln(ts))
+"""    
+#Soufflante, obtenu par integration(Laplace adapté)
+T2=Finv1_calcul(F1(T1)+ln(ts))
     
-    #Compresseur BP, obtenu par integration(Laplace adapté)
-    T3=Finv1_calcul(F1(T2)+ln(tcbp))
+#Compresseur BP, obtenu par integration(Laplace adapté)
+T3=Finv1_calcul(F1(T2)+ln(tcbp))
         
-    #Compresseur HP, obtenu par integration(Laplace adapté)
-    T4=Finv1_calcul(F1(T3)+ln(tchp))
+#Compresseur HP, obtenu par integration(Laplace adapté)
+T4=Finv1_calcul(F1(T3)+ln(tchp))
         
-    #Chambre de combustion, 1er principe thermochimie
-    DfCO2=394000
-    DfH2O=280000
-    DfN2=0
-    DfO2=0
-    DfCH4=88000
-    avanct=WF/(0.012+4*0.001)
-    Df=avanct(DfCO2+2*DfH2O-DfCH4)
+#Chambre de combustion, 1er principe thermochimie
+DfCO2=394000
+DfH2O=280000
+DfN2=0
+DfO2=0
+DfCH4=88000
+avanct=WF/(0.012+4*0.001)
+Df=avanct(DfCO2+2*DfH2O-DfCH4)
 
-    T5=Finv2_calcul(F2(T4)-Df)
+T5=Finv2_calcul(F2(T4)-Df)
 
-    #Turbine HP, obtenu par equilibre HP
-    T6=Finv2_calcul(F2(T5)+(F2(T4)-F2(T3))*WA/(WA+WF))
+#Turbine HP, obtenu par equilibre HP
+T6=Finv2_calcul(F2(T5)+(F2(T4)-F2(T3))*WA/(WA+WF))
 
-    #Turbine BP, obtenu par equilibre BP
-    T7=Finv2_calcul(F2(T6)+(F2(T3)-F2(T1))*WA/(WA+WF)+(F2(T1)-F2(T2))*lamb*WA/(WA+WF))
+#Turbine BP, obtenu par equilibre BP
+T7=Finv2_calcul(F2(T6)+(F2(T3)-F2(T1))*WA/(WA+WF)+(F2(T1)-F2(T2))*lamb*WA/(WA+WF))
 
-    #Mélangeur, application 1er principe
-    T8=Finv2_calcul(((WA+WF)*F2(T7)+lamb*WA*F2(T2))/(WF+WA+WA*lamb))
+#Mélangeur, application 1er principe
+T8=Finv2_calcul(((WA+WF)*F2(T7)+lamb*WA*F2(T2))/(WF+WA+WA*lamb))
 
-    #Tuyère, application 1er principe
-    T9=Finv1_calcul(F1(T8)+ln(tt))
-    C9=sqrt(2+F2(T9)-F2(T8))
+#Tuyère, application 1er principe
+T9=Finv1_calcul(F1(T8)+ln(tt))
+C9=sqrt(2+F2(T9)-F2(T8))
 
-    #Rendement
-    Pcin=(WA+lamb*WA+WF)*C9*C9/2
-    Pth=(WA+WF)*(F2(T5)-F2(T4))
-    Rendement=Pcin/Pth
+#Rendement
+Pcin=(WA+lamb*WA+WF)*C9*C9/2
+Pth=(WA+WF)*(F2(T5)-F2(T4))
+Rendement=Pcin/Pth
+    
+"""
