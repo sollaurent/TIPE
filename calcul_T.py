@@ -1,20 +1,22 @@
 import scipy.integrate as sp
 import math
 import os
+from scipy import interpolate
 
 
 def calcul_T(T0,T1,p,Cp):
     """calcul de la fonction primitive de Cp(T), discrétisée avec un pas de 1/p
     sur l'intervalle [T0,T1], entiers, p entier"""
 
-    R1=[0]
-    R2=[0]#liste vide contenat les futurs couple (T,F(T))
-    for i in range((T1-T0)*p):
+    R1=[T0]
+    R2=[sp.quad(Cp,T0,T0+(1/p))[0]]#liste vide contenat les futurs couple (T,F(T))
+    for i in range(1,(T1-T0)*p):
         R1.append(T0+i*(1/p))#incrémente T
         R2.append(R2[-1]+sp.quad(Cp,T0+i*(1/p),T0+(i+1)*(1/p))[0])#camcul intég
-    R1.pop(0)#on enlève les premiers termes nuls
-    R2.pop(0)
+    #R1.pop(0)#on enlève les premiers termes nuls
+    #R2.pop(0)
     return [R1,R2]#R1 température, R2 valeur de l'intégrale 
+    
     
 def f(T):# à definir plus précisément, fonction Cp(T)
     a=2*math.sqrt(T)    
@@ -28,8 +30,28 @@ def trace(T0,T1,p,Cp):
     R2=calcul_T(T0,T1,p,Cp)[1]
     pypl.plot(R1,R2)
     pypl.show()
+    return R2[-1],R2[0]
     
 def stocker_F(T0,T1,p,Cp):
     file = open("air.txt","w")
     
+    
+    file.close()
+    
+def calcul_inverse(T0,T1,p,Cp):
+    """essai calcul d'inverse avec calcul de T enfonction du pas de l'intégrale
+    désiré"""
+    R1=[0]
+    R2=[0]#liste vide contenat les futurs couple (T,F(T))
+    for i in range((T1-T0)*p):
+        R1.append(T0+i*(1/p))#incrémente T
+        R2.append(R2[-1]+sp.quad(Cp,T0+i*(1/p),T0+(i+1)*(1/p))[0])#camcul intég
+    R1.pop(0)#on enlève les premiers termes nuls
+    R2.pop(0)
+    return [R1,R2]#R1 température, R2 valeur de l'intégrale
+    
+def calcul_inverse2(R1o,R2o,p):
+    """essai calcul d'inverse avec interpolation linéaire"""
+    R1=[0]
+    R2=[0]#liste vide contenat les futurs couple (T,F(T))
     
