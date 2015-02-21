@@ -1,6 +1,5 @@
 from calcul_T import *
 import scipy
-from scipy.integrate import quad
 from math import *
 from scipy import interpolate
 
@@ -43,15 +42,15 @@ def turboreacteur(T1,P1,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a):
     Hypothèses : transformations isentropiques dans com  """
     
     #calcul des fonctions utilisés dans les blocs du turboréacteur
-    f1=lambda T: gamma_temperature(0,0,a)(T)/(T*(gamma_temperature(0,0,a)(T)-1)) #fonction gamma/T*(gamma-1) de l'air
-    F1=calcul_T(200,2500,1,f1) #calcul de la primitive de gamma/T*(gamma-1) pour l'air
+    fp1=lambda T: gamma_temperature(0,0,a)(T)/(T*(gamma_temperature(0,0,a)(T)-1)) #fonction gamma/T*(gamma-1) de l'air
+    F1=calcul_T(200,2500,1,fp1) #calcul de la primitive de gamma/T*(gamma-1) pour l'air
     
     
     f1 = interpolate.interp1d(F1[0],F1[1])#fonction primitive
     finv1=interpolate.interp1d(F1[1],F1[0]) #reciproque
 
-    f2=lambda T : 287*Cp_temperature(2,alpha,a)(T) #fonction 287*Cp pour mélange air/essence
-    F2=calcul_T(200,2500,1,f2) #calcul de la primitive de 287*Cp pour mélange air/essence
+    fp2=lambda T : 287*Cp_temperature(2,alpha,a)(T) #fonction 287*Cp pour mélange air/essence
+    F2=calcul_T(200,2500,1,fp2) #calcul de la primitive de 287*Cp pour mélange air/essence
     
     f2 = interpolate.interp1d(F2[0],F2[1])#fonction primitive
     finv2=interpolate.interp1d(F2[1],F2[0]) #fonction l'inverse            
@@ -72,7 +71,11 @@ def turboreacteur(T1,P1,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a):
     avanct=WF/(0.012+4*0.001)
     Df=avanct*(DfCO2+2*DfH2O-DfCH4)
     
+    print((T4))
+    
     T5=finv2(f2(T4)-Df)
+    
+    print(T5)
     
     #Turbine HP, obtenu par equilibre HP
     T6=finv2(f2(T5)+(f2(T4)-f2(T3))*WA/(WA+WF))
