@@ -29,3 +29,4 @@ def trace(T0,T1,p,Cp):
     pypl.plot(R1,R2)
     pypl.show()
     return R2[-1],R2[0]
+    

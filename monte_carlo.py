@@ -1,3 +1,10 @@
+
+
+#fonction donnant la température et la pression en fonction de l'altitude    
+ISA_temp = interpolate.interp1d([0,11000,20000,32000],[288,216.5,216.5,228.5])
+ISA_P = interpolate.interp1d([0,11000,20000,32000],[101325,22632,5474.9,868.02])
+
+
 def monte_carlo(N):
 "Prend en entree le nombre d'essais N
 "Retourne une liste contenant N listes de paramètres d'entrees
@@ -8,18 +15,10 @@ def monte_carlo(N):
         
         #Altitude
         z=randint(0,32000)
-        #Temperature statique
-        if z<11000:
-            TC=288.15-0.0065*z
-        if z<20000:
-            TC=216.65
-        else :
-            TC=216.65+0.001*(z-20000)
-        #Pression statique
-        if z<11000:
-            PC=101325*(1-0.000022557*z)**5.2571
-        else:
-            PC=22624*exp(-0.000157726*(z-11000))
+        
+        TC = ISA_temp(z)
+        PC= ISA_P(z)
+        
         #Nombre de Mach
         M=random(0.5,2.5)
         #Temperature totale

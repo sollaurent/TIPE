@@ -73,7 +73,7 @@ def turboreacteur(T1,P1,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a):
     
     print((T4))
     
-    T5=finv2(f2(T4)-Df)
+    T5=finv2(f2(T4)+Df)
     
     print(T5)
     
@@ -96,3 +96,5 @@ def turboreacteur(T1,P1,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a):
     Rendement=Pcin/Pth
     
     return Rendement
+    
+    
