@@ -41,8 +41,8 @@ def monte_carlo(N):
         VA=M*(1.4*237*TC)**0.5
         a=VA/M        
         
-        experience.append(TT,PT,ts,tcbp,thbp;tt;alpha,lamb,WA,WF,a)
-        entrees.append experience
+        experience.append(TT,PT,ts,tcbp,thbp,tt,alpha,lamb,WA,WF,a,turboreacteur(TT,PT,ts,tcbp,thbp,tt,alpha,lamb,WA,WF,a))
+        entrees.append(experience)
     return entrees
     
     
