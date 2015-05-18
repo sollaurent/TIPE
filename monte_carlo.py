@@ -29,20 +29,20 @@ def monte_carlo(N):
         #Pression totale
         PT=PC*(1+0.2*M**2)**3.5
         #Taux de compression
-        ts=randint(1,10)
-        tcbp=randint(1,10)
-        tchp=randint(1,10)
-        tt=randint(1,10)
+        ts=randint(1,10)#soufflante
+        tcbp=randint(1,10)#compresseur bp
+        tchp=randint(1,10)#compresseur hp
+        tt=0.97#turbine
         #Richesse
-        alpha=random()
+        alpha=uniform(0.001,0.01)
         #Coefficient de partage du flux
-        lamb=random()
+        lamb=random()*20
         #Flux
         WA=randint(100,1000)
-        WF=uniform(0.01,0.1)
+        WF=alpha*WA
         #Vitesse
         VA=M*(1.4*237*TC)**0.5
-        a=VA/M        
+        a=VA/M#vitesse du son        
         
         experience=[TT,PT,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a,turboreacteur(TT,PT,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a)]
         entrees.append(experience)
