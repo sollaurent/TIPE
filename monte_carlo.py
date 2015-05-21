@@ -12,39 +12,37 @@ def monte_carlo(N):
     Chaque liste correspond a une experience, les parametres etant choisis au 
     hasard"""
     entrees=[]
-    resultat = open("resulat.txt","a")#cré fichier resultat
+    resultat = open("resulat.txt","a")#crée fichier resultat
     for i in range (N):
         experience=[]
         
         #Altitude
-        z=randint(0,32000)
+        z=randint(0,15000)
         
         TC = ISA_temp(z)
         PC= ISA_P(z)
         
         #Nombre de Mach
-        M=uniform(0.5,2.5)#loi uniforme sur 0.5 2.5
+        M=uniform(0,0.99)#loi uniforme sur 0 0.99
         #Temperature totale
         TT=TC*(1+0.2*M**2)
         #Pression totale
         PT=PC*(1+0.2*M**2)**3.5
         #Taux de compression
-        ts=randint(1,10)#soufflante
-        tcbp=randint(1,10)#compresseur bp
-        tchp=randint(1,10)#compresseur hp
+        ts=randint(0,50)#soufflante
+        tcbp=randint(0,50)#compresseur bp
+        tchp=randint(0,50)#compresseur hp
         tt=0.97#turbine
-        #Richesse
-        alpha=uniform(0.001,0.01)
+        #Temperature chambre combustion desiree
+        Tcomb=uniform(1700,2500)
         #Coefficient de partage du flux
-        lamb=random()*20
+        lamb=random()*100
         #Flux
         WA=randint(100,1000)
-        WF=alpha*WA
         #Vitesse
-        VA=M*(1.4*237*TC)**0.5
-        a=VA/M#vitesse du son        
+        VA=M*(1.4*237*TC)**0.5        
         
-        experience=[TT,PT,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a,turboreacteur(TT,PT,ts,tcbp,tchp,tt,alpha,lamb,WA,WF,a)]
+        experience=[TT,PT,ts,tcbp,tchp,tt,Tcomb,lamb,WA,VA,turboreacteur(TT,PT,ts,tcbp,tchp,tt,Tcomb,lamb,WA,VA)]
         entrees.append(experience)
         resultat.write(str(experience))#ajoute au fichier
     resultat.close()
