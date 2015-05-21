@@ -4,35 +4,35 @@ from math import *
 from scipy import interpolate
 
 
-def gamma_temperature(fluide,alpha,a):
+def gamma_temperature(fluide,alpha):
     """ Prend en entrée la nature du fluide : 0=air, 1=kerosene, 2= melange air-kerosene,
-    la richesse alpha (valant 0 pour l'air et 1 pour le kerosene pur),
-    la vitesse du son a.
+    la richesse alpha (valant 0 pour l'air et 1 pour le kerosene pur
     Renvoi gamma(T)"""
+    a=lambda T: exp(3090/T)
     if fluide==0:
-        Cpr=lambda T: 3.5-0.000028*T+0.0000000224*T*T+(3090*3090*a)/(T*T*(a-1)*(a-1))
+        Cpr=lambda T: 3.5-0.000028*T+0.0000000224*T*T+(3090*3090*a(T))/(T*T*(a(T)-1)*(a(T)-1))
         gamma=lambda T: Cpr(T)/(Cpr(T)-1)
     if fluide==1:
         Cpr=lambda T: -0.0000018373*T*T+0.00801994*T+4.47659
         gamma=lambda T: Cpr(T)/(Cpr(T)-1)
     if fluide==2:
-        Cpra=lambda T: 3.5-0.000028*T+0.0000000224*T*T+(3090*3090*a)/(T*T*(a-1)*(a-1))
+        Cpra=lambda T: 3.5-0.000028*T+0.0000000224*T*T+(3090*3090*a(T))/(T*T*(a(T)-1)*(a(T)-1))
         Cprk=lambda T: -0.0000018373*T*T+0.00801994*T+4.47659
         Cpr=lambda T: (Cpra(T)+alpha*Cprk(T))/(alpha+1)
         gamma=lambda T: Cpr(T)/(Cpr(T)-1)
     return gamma
     
-def Cp_temperature(fluide,alpha,a):
+def Cp_temperature(fluide,alpha):
     """ Prend en entrée la nature du fluide : 0=air, 1=kerosene, 2= melange air-kerosene,
-    la richesse alpha (valant 0 pour l'air et 1 pour le kerosene pur),
-    la vitesse du son a.
+    la richesse alpha (valant 0 pour l'air et 1 pour le kerosene pur)
     Renvoi Cp(T)"""
+    a=lambda T: exp(3090/T)
     if fluide==0:
-        Cpr=lambda T: 3.5-0.000028*T+0.0000000224*T*T+(3090*3090*a)/(T*T*(a-1)*(a-1))
+        Cpr=lambda T: 3.5-0.000028*T+0.0000000224*T*T+(3090*3090*a(T))/(T*T*(a(T)-1)*(a(T)-1))
     if fluide==1:
         Cpr=lambda T: -0.0000018373*T*T+0.00801994*T+4.47659
     if fluide==2:
-        Cpra=lambda T: 3.5-0.000028*T+0.0000000224*T*T+(3090*3090*a)/(T*T*(a-1)*(a-1))
+        Cpra=lambda T: 3.5-0.000028*T+0.0000000224*T*T+(3090*3090*a(T))/(T*T*(a(T)-1)*(a(T)-1))
         Cprk=lambda T: -0.0000018373*T*T+0.00801994*T+4.47659
         Cpr=lambda T: (Cpra(T)+alpha*Cprk(T))/(alpha+1)
     return Cpr
@@ -43,14 +43,14 @@ def turboreacteur(T1,P1,ts,tcbp,tchp,Tcomb,lamb,WA,VA,rs,rcbp,rchp,rtbp,rthp):
     avec prise en compte des rendements   """
     
     #calcul des fonctions utilisés dans les blocs du turboréacteur
-    fp1=lambda T: gamma_temperature(0,0,a)(T)/(T*(gamma_temperature(0,0,a)(T)-1)) #fonction gamma/T*(gamma-1) de l'air
+    fp1=lambda T: gamma_temperature(0,0)(T)/(T*(gamma_temperature(0,0)(T)-1)) #fonction gamma/T*(gamma-1) de l'air
     F1=calcul_T(200,2500,1,fp1) #calcul de la primitive de gamma/T*(gamma-1) pour l'air
     
     
     f1 = interpolate.interp1d(F1[0],F1[1])#fonction primitive
     finv1=interpolate.interp1d(F1[1],F1[0]) #reciproque
 
-    fp2=lambda T : 287*Cp_temperature(2,alpha,a)(T) #fonction 287*Cp pour mélange air/essence
+    fp2=lambda T : 287*Cp_temperature(2,alpha)(T) #fonction 287*Cp pour mélange air/essence
     F2=calcul_T(200,2500,1,fp2) #calcul de la primitive de 287*Cp pour mélange air/essence
     
     f2 = interpolate.interp1d(F2[0],F2[1])#fonction primitive
