@@ -94,7 +94,7 @@ def turboreacteur(T1,P1,ts,tcbp,tchp,Tcomb,lamb,WA,VA,rs,rcbp,rchp,rtbp,rthp):
     
     #Tuyère, application 1er principe
     T9=finv1(f1(T8)+log(tt))
-    C9=sqrt(2+f2(T9)-f2(T8))
+    C9=sqrt(2*(f2(T8)-f2(T9)))
     
     #Rendement
     Pcin=((WA+lamb*WA+WF)*C9*C9-(1+lamb)*WA*VA*VA)/2
