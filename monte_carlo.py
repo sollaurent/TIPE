@@ -32,7 +32,12 @@ def monte_carlo(N):
         ts=randint(0,50)#soufflante
         tcbp=randint(0,50)#compresseur bp
         tchp=randint(0,50)#compresseur hp
-        tt=0.97#turbine
+        #rendements
+        rs=random(0.5,1)
+        rcbp=random(0.5,1)
+        rchp=random(0.5,1)
+        rtbp=random(0.5,1)
+        rthp=random(0.5,1)
         #Temperature chambre combustion desiree
         Tcomb=uniform(1700,2500)
         #Coefficient de partage du flux
@@ -42,7 +47,7 @@ def monte_carlo(N):
         #Vitesse
         VA=M*(1.4*237*TC)**0.5        
         
-        experience=[TT,PT,ts,tcbp,tchp,tt,Tcomb,lamb,WA,VA,turboreacteur(TT,PT,ts,tcbp,tchp,tt,Tcomb,lamb,WA,VA)]
+        experience=[TT,PT,ts,tcbp,tchp,Tcomb,lamb,WA,VA,rs,rcbp,rchp,rtbp,rthp,turboreacteur(TT,PT,ts,tcbp,tchp,Tcomb,lamb,WA,VA,rs,rcbp,rchp,rtbp,rthp)]
         entrees.append(experience)
         resultat.write(str(experience))#ajoute au fichier
     resultat.close()
